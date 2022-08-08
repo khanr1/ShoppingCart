@@ -1,6 +1,5 @@
 package shop.effects
 
-package shop.effects
 
 import cats.effect.IO
 import scala.concurrent.duration.FiniteDuration

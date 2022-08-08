@@ -18,6 +18,8 @@ object CheckOutDomain {
   object Card{
     given encoder:Encoder[Card]=Encoder.forProduct4("name","number","expiration","cvv")(u=>(u.name,u.number,u.expiration,u.ccv))
     given decoder:Decoder[Card]=Decoder.forProduct4("name","number","expiration","cvv")(apply)
+    given show:Show[Card]=Show.fromToString
+    given eq:Eq[Card]=Eq.fromUniversalEquals
 
   }
   

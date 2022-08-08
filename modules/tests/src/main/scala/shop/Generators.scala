@@ -18,6 +18,8 @@ import shop.http.auth.UserAuth.User
 import shop.domain.AuthDomain.UserID
 import shop.domain.AuthDomain.UserName
 import shop.http.auth.UserAuth.CommonUser
+import shop.domain.OrderDomain.PaymentID
+import shop.domain.OrderDomain.OrderID
 
 
 
@@ -108,6 +110,11 @@ object Generators {
         n<- userNameGen
     } yield User(i,n)
     val commonUserGen:Gen[CommonUser]=userGen.map(CommonUser.apply)
+    //payment 
+    val paymentIdGen: Gen[PaymentID] =
+        idGen(PaymentID.apply)
+    //order
+    val orderIdGen:Gen[OrderID]=idGen(OrderID.apply)
     
 
 

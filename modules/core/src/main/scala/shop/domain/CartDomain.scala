@@ -9,6 +9,7 @@ import shop.domain.AuthDomain.UserID
 import scala.util.control.NoStackTrace
 import cats.Show
 import squants.market.USD
+import cats.kernel.Eq
 
 
 object CartDomain {
@@ -47,6 +48,9 @@ object CartDomain {
 
     given encoder:Encoder[CartTotal]=Encoder.forProduct2("items","total")(c=>(c.items,c.total))
     given decoder:Decoder[CartTotal]=Decoder.forProduct2("items","total")(apply)
+    given show:Show[CartTotal]=Show.fromToString
+    given eq:Eq[CartTotal]=Eq.fromUniversalEquals
+
   }
 
   case class CartNotFound(userId:UserID) extends NoStackTrace

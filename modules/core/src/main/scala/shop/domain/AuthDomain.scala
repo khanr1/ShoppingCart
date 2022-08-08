@@ -9,6 +9,7 @@ import monocle.Iso
 import scala.util.control.NoStackTrace
 import cats.Show
 import javax.crypto.Cipher
+import cats.kernel.Eq
 
 
 
@@ -51,6 +52,7 @@ object AuthDomain {
           def _UUID:Iso[UUID,UserID]=Iso(apply)(u=> u.value)
       }
       given show:Show[UserID]=Show.show(uuid=>uuid.value.toString)
+      given eq  :Eq[UserID] = Eq.fromUniversalEquals
   }
 
   opaque type EncryptCipher= Cipher

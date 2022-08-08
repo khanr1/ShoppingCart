@@ -20,23 +20,25 @@ object Dependencies{
           
         val cats          = "org.typelevel"      %% "cats-core"           % Version.cats
         val catsEffect    = "org.typelevel"      %% "cats-effect"         % Version.catsEffect
-        val catsRetry     = "com.github.cb372"   %% "cats-retry"          % Version.catsRetry
         val catsLogs      = "org.typelevel"      %% "log4cats-core"       % Version.catsLogs
-        val squants       = "org.typelevel"      %% "squants"             % Version.squants
+        val catsLogsNoOp  = "org.typelevel"       %% "log4cats-noop"      % Version.catsLogs
+        val catsRetry     = "com.github.cb372"   %% "cats-retry"          % Version.catsRetry
         val circe         = "io.circe"           %% "circe-core"          % Version.circe
-        val monocle       = "dev.optics"         %% "monocle-core"        % Version.monocle
         val http4s        = "org.http4s"         %% "http4s-core"         % Version.http4s
-        val http4sDsl     = "org.http4s"         %% "http4s-dsl"          % Version.http4s
         val http4sCirce   = "org.http4s"         %% "http4s-circe"        % Version.http4s
-        val http4sServer  = "org.http4s"         %% "http4s-ember-server" % Version.http4s
         val http4sClient  = "org.http4s"         %% "http4s-ember-client" % Version.http4s
-        val skunkCore     = "org.tpolecat"       %% "skunk-core"          % Version.skunk
-        val skunkCirce    = "org.tpolecat"       %% "skunk-circe"         % Version.skunk
+        val http4sDsl     = "org.http4s"         %% "http4s-dsl"          % Version.http4s
+        val http4sServer  = "org.http4s"         %% "http4s-ember-server" % Version.http4s
+        val javaxCrypto   = "javax.xml.crypto"    % "jsr105-api"          % Version.javaxCrypto
+        val jwtAuth       = "com.khanr1"         %%  "jwt-auth-http4s"    % Version.jwtAuth      
+        val monocle       = "dev.optics"         %% "monocle-core"        % Version.monocle
         val redis4catsCor = "dev.profunktor"     %% "redis4cats-core"     % Version.redis4cats
         val redis4catsEff = "dev.profunktor"     %% "redis4cats-effects"  % Version.redis4cats
         val redis4catsLog = "dev.profunktor"     %% "redis4cats-log4cats" % Version.redis4cats
-        val jwtAuth       = "com.khanr1"         %%  "jwt-auth-http4s"    % Version.jwtAuth      
-        val javaxCrypto   = "javax.xml.crypto"    % "jsr105-api"          % Version.javaxCrypto
+        val skunkCirce    = "org.tpolecat"       %% "skunk-circe"         % Version.skunk
+        val skunkCore     = "org.tpolecat"       %% "skunk-core"          % Version.skunk
+        val squants       = "org.typelevel"      %% "squants"             % Version.squants
+
 
     }
 }
