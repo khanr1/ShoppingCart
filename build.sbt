@@ -33,7 +33,6 @@ lazy val core = (project in file("./modules/core"))
             Library.redis4catsLog,
             Library.jwtAuth,
             Library.javaxCrypto,
-            Library.catsLogsNoOp
         )
     )
 
@@ -41,5 +40,8 @@ lazy val tests = (project in file("./modules/tests"))
     .settings(
         name:="shopping-cart-tests",
         testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
+        libraryDependencies ++=Seq(
+            Library.catsLogsNoOp,
+        )
     )
     .dependsOn(core)

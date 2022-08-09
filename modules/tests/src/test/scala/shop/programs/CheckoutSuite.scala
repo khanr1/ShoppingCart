@@ -25,6 +25,9 @@ import org.typelevel.log4cats.noop.NoOpLogger
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import shop.effects.TestBackground
 import shop.effects.Background
+import squants.market.Currency.apply
+import shop.domain.OrderDomain.EmptyCartError
+import squants.market.USD
 
 
 
@@ -50,6 +53,10 @@ object CheckoutSuite extends SimpleIOSuite with Checkers {
     ):IO[OrderID]=IO.pure(oid)
   }
 
+  val emptyCart:ShoppingCartsService[IO]=new TestCart{
+    override def get(userId: UserID): IO[CartTotal] = IO.pure(CartTotal(List.empty,USD(0)))
+  }
+
   val gen=for{
     uid<-userIdGen
     pid<-paymentIdGen
@@ -69,6 +76,23 @@ object CheckoutSuite extends SimpleIOSuite with Checkers {
           .process(uid,card)
           .map(expect.same(oid,_))      
     }  
+  }
+
+  test("empty cart"){
+    forall(gen){
+      case (uid,pid,oid,_,card) => 
+        Checkout[IO](
+          successfulClient(pid),
+          emptyCart,
+          successfulOrders(oid),
+          retryPolicy
+        ).process(uid,card)
+         .attempt
+         .map{
+            case Left(EmptyCartError) => success
+            case _ => failure("cart was not empty")
+         }
+    }
   }
 }
 import shop.effects.Background
