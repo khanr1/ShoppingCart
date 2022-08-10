@@ -28,6 +28,7 @@ import shop.effects.Background
 import squants.market.Currency.apply
 import shop.domain.OrderDomain.EmptyCartError
 import squants.market.USD
+import shop.domain.OrderDomain.OrderOrPaymentError
 
 
 
@@ -36,7 +37,7 @@ object CheckoutSuite extends SimpleIOSuite with Checkers {
   val maxRetries = 3
   val retryPolicy:RetryPolicy[IO]=limitRetries[IO](maxRetries)
 
-  def successfulClient(paymentID:PaymentID):PaymentsService[IO]=new PaymentsService[IO]{
+  def successfulClient(paymentID:PaymentID):PaymentClient[IO]=new PaymentClient[IO]{
     def process(payment: Payment): IO[PaymentID] = IO.pure(paymentID)
   }
   def successfulCart(cartTotal:CartTotal):ShoppingCartsService[IO]=
@@ -53,9 +54,16 @@ object CheckoutSuite extends SimpleIOSuite with Checkers {
     ):IO[OrderID]=IO.pure(oid)
   }
 
+
   val emptyCart:ShoppingCartsService[IO]=new TestCart{
     override def get(userId: UserID): IO[CartTotal] = IO.pure(CartTotal(List.empty,USD(0)))
   }
+
+  val unreachableClient: PaymentClient[IO] =
+    new PaymentClient[IO]{
+      def process(payment: Payment): IO[PaymentID] =
+        IO.raiseError(OrderOrPaymentError.PaymentError(""))
+    }
 
   val gen=for{
     uid<-userIdGen
