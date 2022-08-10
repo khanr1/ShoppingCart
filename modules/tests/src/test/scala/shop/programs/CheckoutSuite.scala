@@ -2,33 +2,38 @@ package shop.programs
 
 import cats.data.NonEmptyList
 import cats.effect.IO
+import org.typelevel.log4cats.noop.NoOpLogger
+import org.typelevel.log4cats.SelfAwareStructuredLogger
 import retry.RetryPolicies.*
 import retry.RetryPolicy
 import shop.domain.AuthDomain.UserID
 import shop.domain.CartDomain.*
 import shop.domain.CartDomain.Quantity
 import shop.domain.ItemDomain.ItemID
+import shop.domain.OrderDomain.EmptyCartError
 import shop.domain.OrderDomain.Order
 import shop.domain.OrderDomain.OrderID
+import shop.domain.OrderDomain.OrderOrPaymentError
 import shop.domain.OrderDomain.PaymentID
 import shop.domain.PaymentDomain.Payment
+import shop.effects.Background
+import shop.effects.TestBackground
 import shop.Generators.*
 import shop.http.clients.PaymentClient
 import shop.programs
+import shop.retries.TestRetry.*
 import shop.services.OrderService
 import shop.services.PaymentsService
 import shop.services.ShoppingCartsService
+import squants.market.Currency.apply
 import squants.market.Money
+import squants.market.USD
 import weaver.scalacheck.Checkers
 import weaver.SimpleIOSuite
-import org.typelevel.log4cats.noop.NoOpLogger
-import org.typelevel.log4cats.SelfAwareStructuredLogger
-import shop.effects.TestBackground
-import shop.effects.Background
-import squants.market.Currency.apply
-import shop.domain.OrderDomain.EmptyCartError
-import squants.market.USD
-import shop.domain.OrderDomain.OrderOrPaymentError
+import retry.RetryDetails.GivingUp
+import cats.effect.kernel.Ref
+import shop.retries.Retry
+import shop.retries.TestRetry
 
 
 
@@ -100,6 +105,25 @@ object CheckoutSuite extends SimpleIOSuite with Checkers {
             case Left(EmptyCartError) => success
             case _ => failure("cart was not empty")
          }
+    }
+  }
+
+  test("unreachable payment client"){
+    forall(gen){
+      case (uid,pid,oid,ct,card) =>
+        Ref.of[IO,Option[GivingUp]](None).flatMap{retries =>
+          given rh:Retry[IO]= TestRetry.givingUp(retries)
+          Checkout[IO](unreachableClient,successfulCart(ct),successfulOrders(oid),retryPolicy)
+            .process(uid,card)
+            .attempt
+            .flatMap{
+              case Left(OrderOrPaymentError.PaymentError(_))=> retries.get.map{
+                case Some(g) => expect.same(g.totalRetries,maxRetries)
+                case None => failure("expected given up")
+              }
+              case _ => IO.pure(failure("Expected payment error"))
+            }
+        }
     }
   }
 }
