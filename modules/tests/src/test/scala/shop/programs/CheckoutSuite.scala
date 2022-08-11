@@ -2,6 +2,7 @@ package shop.programs
 
 import cats.data.NonEmptyList
 import cats.effect.IO
+import cats.syntax.all.*
 import org.typelevel.log4cats.noop.NoOpLogger
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import retry.RetryPolicies.*
@@ -31,6 +32,7 @@ import squants.market.USD
 import weaver.scalacheck.Checkers
 import weaver.SimpleIOSuite
 import retry.RetryDetails.GivingUp
+import retry.RetryDetails.WillDelayAndRetry
 import cats.effect.kernel.Ref
 import shop.retries.Retry
 import shop.retries.TestRetry
@@ -58,6 +60,17 @@ object CheckoutSuite extends SimpleIOSuite with Checkers {
       total:Money
     ):IO[OrderID]=IO.pure(oid)
   }
+
+  def recoveringClient(
+    attemptsSoFar:Ref[IO,Int],
+    paymentID:PaymentID
+  ): PaymentClient[IO]=
+    new PaymentClient[IO]{
+      def process(payment: Payment): IO[PaymentID] = attemptsSoFar.get.flatMap{
+        case n if n == 1 => IO.pure(paymentID)
+        case _ => attemptsSoFar.update(_ +1) *> IO.raiseError(OrderOrPaymentError.PaymentError(""))
+      }
+    }
 
 
   val emptyCart:ShoppingCartsService[IO]=new TestCart{
@@ -126,6 +139,31 @@ object CheckoutSuite extends SimpleIOSuite with Checkers {
         }
     }
   }
+
+  test("failing payment client succeeds after one retry"){
+    forall(gen){
+      case(uid,pid,oid,ct,card)=> 
+        (Ref.of[IO,Option[WillDelayAndRetry]](None),Ref.of[IO,Int](0)).tupled.flatMap{
+          case (retries,cliRef) => 
+            given  rh:Retry[IO]=TestRetry.recovering(retries)
+            Checkout[IO](
+              recoveringClient(cliRef,pid),
+              successfulCart(ct),
+              successfulOrders(oid),
+              retryPolicy
+            ).process(uid,card)
+            .attempt
+            .flatMap{
+              case Right(id) => retries.get.map{
+                case Some(w) => expect.same(id,oid) |+| expect.same(0,w.retriesSoFar)
+                case None => failure("expected 1 try")
+              }
+              case Left(_) => IO.pure(failure("expected PaymentID"))
+            }
+        }
+    }
+  }
+
 }
 import shop.effects.Background
 

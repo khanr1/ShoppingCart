@@ -23,4 +23,5 @@ object TestRetry {
     }
   def givingUp(ref:Ref[IO,Option[GivingUp]]):Retry[IO]= 
     handlerFor[GivingUp](ref)
+  def recovering(ref:Ref[IO,Option[WillDelayAndRetry]]):Retry[IO]=handlerFor[WillDelayAndRetry](ref)
 }
