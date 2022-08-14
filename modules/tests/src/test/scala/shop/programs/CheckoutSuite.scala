@@ -23,19 +23,16 @@ import shop.Generators.*
 import shop.http.clients.PaymentClient
 import shop.programs
 import shop.retries.TestRetry.*
-import shop.services.OrderService
-import shop.services.PaymentsService
-import shop.services.ShoppingCartsService
-import squants.market.Currency.apply
-import squants.market.Money
-import squants.market.USD
+import shop.services.*
+import squants.market.*
 import weaver.scalacheck.Checkers
-import weaver.SimpleIOSuite
+import weaver.*
 import retry.RetryDetails.GivingUp
 import retry.RetryDetails.WillDelayAndRetry
 import cats.effect.kernel.Ref
-import shop.retries.Retry
-import shop.retries.TestRetry
+import shop.retries.*
+import scala.concurrent.duration.*
+
 
 
 
@@ -91,6 +88,15 @@ object CheckoutSuite extends SimpleIOSuite with Checkers {
     crd <- cardGen
 
   } yield (uid, pid, oid, crt, crd)
+
+  val failingOrder:OrderService[IO]=new TestOrders{
+    override def create
+    (userId: UserID, 
+     paymentId: PaymentID,
+     items: NonEmptyList[CartItem],
+     total: Money): IO[OrderID] =
+       IO.raiseError(OrderOrPaymentError.OrderError(""))
+  }
 
   given bg:Background[IO]= TestBackground.noOp
   implicit val lg:SelfAwareStructuredLogger[IO] = NoOpLogger[IO]
@@ -160,6 +166,37 @@ object CheckoutSuite extends SimpleIOSuite with Checkers {
               }
               case Left(_) => IO.pure(failure("expected PaymentID"))
             }
+        }
+    }
+  }
+
+  test("cannot create order, run in the background"){
+    forall(gen){
+      case (uid,pid,_,ct,card) =>
+        (Ref.of[IO,(Int,FiniteDuration)](0 -> 0.seconds),Ref.of[IO,Option[GivingUp]](None))
+        .tupled
+        .flatMap{
+          case (acc,retries)=>
+            given bg:Background[IO]=TestBackground.counter(acc)
+            given rh:Retry[IO]=TestRetry.givingUp(retries)
+            Checkout[IO](
+              successfulClient(pid),
+              successfulCart(ct),
+              failingOrder,
+              retryPolicy)
+              .process(uid,card)
+              .attempt
+              .flatMap{
+                case Left(OrderOrPaymentError.OrderError(_))=> 
+                  (acc.get,retries.get).mapN{
+                    case (c,Some(g)) => 
+                      expect.same(c,1 -> 1.hour) |+| expect.same(g.totalRetries, maxRetries)
+                    case _ => failure(s"Expected $maxRetries retries and schedule ")
+                  }
+                case _ => IO.pure(failure("Expected order error"))
+                
+              }
+            
         }
     }
   }
