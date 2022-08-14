@@ -32,6 +32,7 @@ import retry.RetryDetails.WillDelayAndRetry
 import cats.effect.kernel.Ref
 import shop.retries.*
 import scala.concurrent.duration.*
+import scala.util.control.NoStackTrace
 
 
 
@@ -67,6 +68,12 @@ object CheckoutSuite extends SimpleIOSuite with Checkers {
         case n if n == 1 => IO.pure(paymentID)
         case _ => attemptsSoFar.update(_ +1) *> IO.raiseError(OrderOrPaymentError.PaymentError(""))
       }
+    }
+  
+  def failingCart(ct:CartTotal):ShoppingCartsService[IO]=
+    new TestCart{
+      override def get(userId: UserID): IO[CartTotal] = IO.pure(ct)
+      override def delete(userId: UserID): IO[Unit] = IO.raiseError(new NoStackTrace{})
     }
 
 
@@ -198,6 +205,20 @@ object CheckoutSuite extends SimpleIOSuite with Checkers {
               }
             
         }
+    }
+  }
+
+  test("failing to delete cart does not affect the checkout"){
+    forall(gen){
+      case (uid,pid,oid,ct,card) =>
+        Checkout[IO](
+          successfulClient(pid),
+          failingCart(ct),
+          successfulOrders(oid),
+          retryPolicy
+          ).process(uid,card)
+           .map(expect.same(oid, _))
+        
     }
   }
 
