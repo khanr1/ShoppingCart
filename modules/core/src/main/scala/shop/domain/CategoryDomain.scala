@@ -6,6 +6,7 @@ import io.circe.Decoder
 import monocle.Iso
 import cats.arrow.Category
 import shop.optics.IsUUID
+import cats.Show
 
 object CategoryDomain {
     opaque type CategoryID=UUID
@@ -15,9 +16,9 @@ object CategoryDomain {
 
         given encoder:Encoder[CategoryID]=categoryid=> Encoder.encodeUUID.apply(categoryid.value)
         given decoder:Decoder[CategoryID]=Decoder.decodeUUID.map(apply)
+        given show:Show[CategoryID]=Show.show(id=> id.toString())
         given uuidIso: IsUUID[CategoryID]=new  IsUUID[CategoryID]{
-            def _UUID: Iso[UUID,CategoryID]=Iso[UUID,CategoryID](apply)(_.value)
-            
+            def _UUID: Iso[UUID,CategoryID]=Iso[UUID,CategoryID](apply)(_.value)   
         }
     }
     opaque type CategoryName=String
@@ -27,6 +28,7 @@ object CategoryDomain {
 
         given encoder:Encoder[CategoryName]=name => Encoder.encodeString.apply(name.value)
         given decoder:Decoder[CategoryName]=Decoder.decodeString.map(apply)
+        given show :Show[CategoryName]=Show.fromToString
     }
 
     opaque type CategoryParam=String
@@ -46,6 +48,7 @@ object CategoryDomain {
     object Category{
         given encoder:Encoder[Category]=Encoder.forProduct2("id","name")(c=>(c.id,c.name))
         given decoder:Decoder[Category]=Decoder.forProduct2("id","name")(apply)
+        given show:Show[Category]=Show.fromToString
     }
   
 }
