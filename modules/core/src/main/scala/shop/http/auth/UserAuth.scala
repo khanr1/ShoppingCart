@@ -2,6 +2,7 @@ package shop.http.auth
 
 import shop.domain.AuthDomain.*
 import io.circe.{Encoder,Decoder}
+import cats.Show
 
 
 object UserAuth {
@@ -9,6 +10,7 @@ object UserAuth {
   object User{
       given encoder:Encoder[User]=Encoder.forProduct2("id","name")(u=>(u.id,u.name))
       given decoder:Decoder[User]=Decoder.forProduct2("id","name")(apply)
+      given show:Show[User]=Show.fromToString
   }
 
   case class UserWithPassword(id:UserID,name:UserName,password:EncryptedPassword)
@@ -21,6 +23,7 @@ object UserAuth {
   object CommonUser{
       def apply(u:User):CommonUser=u
       extension (cu:CommonUser) def value:User=cu
+      given show:Show[CommonUser]=Show.fromToString
   }
 
   opaque type AdminUser=User

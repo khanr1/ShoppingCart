@@ -31,6 +31,7 @@ object CartDomain {
 
       given encoder:Encoder[Cart]=cart => Json.obj( "items" -> Encoder.encodeMap.apply(cart.items))
       given decoder:Decoder[Cart]=Decoder.decodeMap.at("items")  
+      given show:Show[Cart]=Show.fromToString
     }
   
   case class CartItem(item:Item, quantity:Quantity){

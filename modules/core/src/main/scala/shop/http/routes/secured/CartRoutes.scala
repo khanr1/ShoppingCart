@@ -27,9 +27,10 @@ final case class CartRoutes[F[_]:JsonDecoder:Monad](carts:ShoppingCartsService[F
         case GET -> Root as user => Ok(carts.get(user.value.id))
         //Add Item to the cart 
         case ar @ POST -> Root as user =>
-            ar.req.asJsonDecode[Cart].flatMap(c=>c.items.map{
+            ar.req.asJsonDecode[Cart].flatMap{c=>c.items.map{
                 case (id,quantity) => carts.add(user.value.id,id,quantity)
-            }.toList.sequence *> Created())
+            }.toList.sequence *> Created()
+        }
         //modify items in Cart
         case ar @ PUT -> Root as user =>{
             ar.req.asJsonDecode[Cart].flatMap{c=>

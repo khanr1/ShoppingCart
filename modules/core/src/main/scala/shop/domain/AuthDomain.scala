@@ -21,6 +21,7 @@ object AuthDomain {
 
       given decoder:Decoder[UserName]=Decoder.decodeString.map(apply)
       given encoder:Encoder[UserName]=Encoder.encodeString.contramap(_.value)
+      given show:Show[UserName]=Show.fromToString
     }
 
   opaque type Password =String
