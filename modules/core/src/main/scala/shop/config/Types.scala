@@ -34,5 +34,21 @@ object Types {
     given show:Show[JwtAccessTokenKeyConfig]=Show.show(ps=> ps.value)
       
   }
+
+  opaque type PaymentURI=String
+  object PaymentURI{
+    def apply(str:String):PaymentURI=str
+    extension (pc:PaymentURI){
+      def  value:String=pc
+    }
+  }
+
+  opaque type PaymentConfig=PaymentURI
+  object PaymentConfig{
+    def apply(puri:PaymentURI):PaymentConfig=puri
+    extension (pc:PaymentConfig){
+      def  uri:PaymentURI=pc
+    }
+  }
   
 }

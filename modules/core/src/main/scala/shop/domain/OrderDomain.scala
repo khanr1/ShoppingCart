@@ -68,4 +68,9 @@ object OrderDomain {
       case OrderError(cause:String) extends OrderOrPaymentError
       case PaymentError(cause:String) extends OrderOrPaymentError
   }
+  object OrderOrPaymentError{
+    given show:Show[OrderOrPaymentError]=Show.show(_.cause)
+    given eq:Eq[OrderOrPaymentError]=Eq.fromUniversalEquals
+  }
+
 }

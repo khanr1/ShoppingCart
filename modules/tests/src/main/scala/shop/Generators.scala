@@ -20,6 +20,7 @@ import shop.domain.AuthDomain.UserName
 import shop.http.auth.UserAuth.CommonUser
 import shop.domain.OrderDomain.PaymentID
 import shop.domain.OrderDomain.OrderID
+import shop.domain.PaymentDomain.Payment
 
 
 
@@ -113,8 +114,15 @@ object Generators {
     //payment 
     val paymentIdGen: Gen[PaymentID] =
         idGen(PaymentID.apply)
+      val paymentGen: Gen[Payment] =
+    for {
+      i <- userIdGen
+      m <- moneyGen
+      c <- cardGen
+    } yield Payment(i, m, c)
     //order
     val orderIdGen:Gen[OrderID]=idGen(OrderID.apply)
+
     
 
 
