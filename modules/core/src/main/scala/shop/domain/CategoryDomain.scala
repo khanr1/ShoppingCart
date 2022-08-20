@@ -7,6 +7,7 @@ import monocle.Iso
 import cats.arrow.Category
 import shop.optics.IsUUID
 import cats.Show
+import cats.kernel.Eq
 
 object CategoryDomain {
     opaque type CategoryID=UUID
@@ -16,6 +17,7 @@ object CategoryDomain {
 
         given encoder:Encoder[CategoryID]=categoryid=> Encoder.encodeUUID.apply(categoryid.value)
         given decoder:Decoder[CategoryID]=Decoder.decodeUUID.map(apply)
+        given eq:Eq[CategoryID]=Eq.fromUniversalEquals
         given show:Show[CategoryID]=Show.show(id=> id.toString())
         given uuidIso: IsUUID[CategoryID]=new  IsUUID[CategoryID]{
             def _UUID: Iso[UUID,CategoryID]=Iso[UUID,CategoryID](apply)(_.value)   

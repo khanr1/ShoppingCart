@@ -42,6 +42,11 @@ lazy val tests = (project in file("./modules/tests"))
         testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
         libraryDependencies ++=Seq(
             Library.catsLogsNoOp,
+            Library.catsLaws,
+            Library.monocleLaws,
+            Library.weaverCats,
+            Library.weaverDiscipline,
+            Library.weaverScalaCheck
         )
     )
     .dependsOn(core)

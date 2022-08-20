@@ -2,7 +2,7 @@ import sbt._
 object Dependencies{
 
     object Version{
-        val cats       = "2.7.0"
+        val cats       = "2.8.0"
         val catsEffect = "3.3.11"
         val catsRetry  = "3.1.0"
         val catsLogs   = "2.2.0"
@@ -13,7 +13,8 @@ object Dependencies{
         val skunk      = "0.3.1"
         val redis4cats = "1.2.0"
         val jwtAuth    = "0.1.0-SNAPSHOT"
-        val javaxCrypto   = "1.0.1"
+        val javaxCrypto= "1.0.1"
+        val weaver     = "0.7.11"
     }
     
     object Library{ 
@@ -38,6 +39,14 @@ object Dependencies{
         val skunkCirce    = "org.tpolecat"       %% "skunk-circe"         % Version.skunk
         val skunkCore     = "org.tpolecat"       %% "skunk-core"          % Version.skunk
         val squants       = "org.typelevel"      %% "squants"             % Version.squants
+
+        //
+        val catsLaws          = "org.typelevel"       %% "cats-laws"           % Version.cats
+        val monocleLaws       = "dev.optics"          %% "monocle-law"        % Version.monocle
+        val weaverCats        = "com.disneystreaming" %% "weaver-cats"     % Version.weaver
+        val weaverDiscipline  = "com.disneystreaming" %% "weaver-discipline"  % Version.weaver
+        val weaverScalaCheck  = "com.disneystreaming" %% "weaver-scalacheck"  % Version.weaver
+
 
 
     }
