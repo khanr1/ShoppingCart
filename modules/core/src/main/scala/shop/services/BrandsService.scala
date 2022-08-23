@@ -32,8 +32,14 @@ private object BrandSQL{
   }(brand=> brand.id ~ brand.name)
 
   val selectALL:Query[Void,Brand]= 
-    sql"SELECT * FROM brands".query(codec)
+    sql"""
+      SELECT * FROM brands
+      """.query(codec)
+      
   val insertBrand:Command[Brand]=
-    sql"INSER INTO brands VALUE ($codec)".command
+    sql"""
+        INSERT INTO brands
+        VALUES ($codec)
+        """.command
     
 }

@@ -44,7 +44,7 @@ private object ItemSQL{
         }
 
     val selectAll:Query[Void,Item] = 
-        sql""""
+        sql"""
             SELECT i.uuid, i.name, i.description, i.price, 
             b.uuid, b.name, c.uuid, c.name FROM items AS i
             INNER JOIN brands AS b ON i.brand_id = b.uuid
@@ -73,7 +73,7 @@ private object ItemSQL{
 
     val insertItem:Command[ItemID ~ CreateItem] = 
         sql""" 
-            INSERT INTO items VALUE($itemID,$itemName,$itemDesc,$money,$brandID, $categoryID)
+            INSERT INTO items VALUES($itemID,$itemName,$itemDesc,$money,$brandID, $categoryID)
         """.command.contramap{
             case id ~ i => id ~ i.name ~ i.description ~ i.price ~ i.brandid ~ i.categoryid
         }

@@ -21,6 +21,7 @@ import shop.http.auth.UserAuth.CommonUser
 import shop.domain.OrderDomain.PaymentID
 import shop.domain.OrderDomain.OrderID
 import shop.domain.PaymentDomain.Payment
+import shop.domain.AuthDomain.EncryptedPassword
 
 
 
@@ -122,6 +123,9 @@ object Generators {
     } yield Payment(i, m, c)
     //order
     val orderIdGen:Gen[OrderID]=idGen(OrderID.apply)
+    //Encrypted password
+    val encryptedPasswordGen: Gen[EncryptedPassword] =
+        nesGen(EncryptedPassword.apply)
 
     
 

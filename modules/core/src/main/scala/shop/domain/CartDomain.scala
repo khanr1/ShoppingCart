@@ -21,7 +21,7 @@ object CartDomain {
       
       given encoder:Encoder[Quantity]=Encoder.encodeInt.contramap(_.value)
       given decoder:Decoder[Quantity]=Decoder.decodeInt.map(apply)
-      given show:Show[Quantity]= Show.fromToString
+      given show:Show[Quantity]= Show.show(x=>x.toString())
   }
 
   opaque type Cart=Map[ItemID,Quantity]
@@ -42,6 +42,7 @@ object CartDomain {
     
     given encoder:Encoder[CartItem]=Encoder.forProduct2("item","quantity")(c=> (c.item,c.quantity))
     given decoder:Decoder[CartItem]=Decoder.forProduct2("item","quantity")(apply)
+    given show:Show[CartItem]=Show.fromToString
   }
 
   case class CartTotal(items:List[CartItem],total:Money)

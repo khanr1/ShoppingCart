@@ -37,9 +37,11 @@ lazy val core = (project in file("./modules/core"))
     )
 
 lazy val tests = (project in file("./modules/tests"))
+    .configs(IntegrationTest)
     .settings(
         name:="shopping-cart-tests",
         testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
+        Defaults.itSettings,
         libraryDependencies ++=Seq(
             Library.catsLogsNoOp,
             Library.catsLaws,

@@ -31,6 +31,7 @@ object CategoryDomain {
         given encoder:Encoder[CategoryName]=name => Encoder.encodeString.apply(name.value)
         given decoder:Decoder[CategoryName]=Decoder.decodeString.map(apply)
         given show :Show[CategoryName]=Show.fromToString
+        given eq:Eq[CategoryName]=Eq.fromUniversalEquals
     }
 
     opaque type CategoryParam=String
@@ -51,6 +52,7 @@ object CategoryDomain {
         given encoder:Encoder[Category]=Encoder.forProduct2("id","name")(c=>(c.id,c.name))
         given decoder:Decoder[Category]=Decoder.forProduct2("id","name")(apply)
         given show:Show[Category]=Show.fromToString
+        given eq:Eq[Category]=Eq.fromUniversalEquals
     }
   
 }

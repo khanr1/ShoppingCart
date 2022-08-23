@@ -25,7 +25,7 @@ object OrderDomain {
       given decoder:Decoder[OrderID]=Decoder.decodeUUID.map(apply)
       given encoder:Encoder[OrderID]=Encoder.encodeUUID.contramap(_.value)
       given eq :Eq[OrderID]=Eq.fromUniversalEquals
-      given show:Show[OrderID]=Show.fromToString
+      given show:Show[OrderID]=Show.show(x=> x.toString())
 
       
   }
@@ -40,7 +40,7 @@ object OrderDomain {
       }
       given decoder:Decoder[PaymentID]=Decoder.decodeUUID.map(apply)
       given encoder:Encoder[PaymentID]=Encoder.encodeUUID.contramap(_.value)
-      given show:Show[PaymentID]=Show.fromToString
+      given show:Show[PaymentID]=Show.show(x=>x.toString())
       given eq :Eq[PaymentID]=Eq.fromUniversalEquals
 
   }
