@@ -33,6 +33,7 @@ lazy val core = (project in file("./modules/core"))
             Library.redis4catsLog,
             Library.jwtAuth,
             Library.javaxCrypto,
+            Library.ciris,
         )
     )
 

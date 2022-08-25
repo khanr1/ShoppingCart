@@ -15,6 +15,7 @@ object Dependencies{
         val jwtAuth    = "0.1.0-SNAPSHOT"
         val javaxCrypto= "1.0.1"
         val weaver     = "0.7.11"
+        val ciris      = "2.3.3"
     }
     
     object Library{ 
@@ -39,8 +40,8 @@ object Dependencies{
         val skunkCirce    = "org.tpolecat"       %% "skunk-circe"         % Version.skunk
         val skunkCore     = "org.tpolecat"       %% "skunk-core"          % Version.skunk
         val squants       = "org.typelevel"      %% "squants"             % Version.squants
-
-        //
+        val ciris         = "is.cir"             %% "ciris"               % Version.ciris
+        // TEST
         val catsLaws          = "org.typelevel"       %% "cats-laws"           % Version.cats
         val monocleLaws       = "dev.optics"          %% "monocle-law"        % Version.monocle
         val weaverCats        = "com.disneystreaming" %% "weaver-cats"     % Version.weaver
