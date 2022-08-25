@@ -1,13 +1,12 @@
 package shop.auth
 
-import com.khanr1.auth.Jwt.JwtToken
-import shop.effects.GenUUID
 import cats.*
 import cats.syntax.all.*
-import pdi.jwt.*
-import io.circe.syntax.*
 import com.khanr1.auth.Jwt.*
+import io.circe.syntax.*
+import pdi.jwt.*
 import shop.config.Types.*
+import shop.effects.GenUUID
 
 trait Tokens[F[_]] {
   def create: F[JwtToken]
@@ -23,7 +22,7 @@ object Tokens {
       def create: F[JwtToken] =
         for {
           uuid  <- GenUUID[F].make
-          claim <- jwtExpire.expiresIn(JwtClaim(uuid.asJson.noSpaces), exp)
+          claim <- jwtExpire.expiresIn(JwtClaim(s"{\"id\":\"${uuid}\"}"), exp)
           secretKey = JwtSecret(config.value)
           token <- jwtEncode[F](claim, secretKey, JwtAlgorithm.HS256)
         } yield token

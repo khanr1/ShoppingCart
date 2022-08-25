@@ -22,6 +22,7 @@ object CartDomain {
       given encoder:Encoder[Quantity]=Encoder.encodeInt.contramap(_.value)
       given decoder:Decoder[Quantity]=Decoder.decodeInt.map(apply)
       given show:Show[Quantity]= Show.show(x=>x.toString())
+      given eq:Eq[Quantity]=Eq.fromUniversalEquals
   }
 
   opaque type Cart=Map[ItemID,Quantity]

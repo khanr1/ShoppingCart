@@ -22,6 +22,7 @@ import shop.domain.OrderDomain.PaymentID
 import shop.domain.OrderDomain.OrderID
 import shop.domain.PaymentDomain.Payment
 import shop.domain.AuthDomain.EncryptedPassword
+import shop.domain.AuthDomain.Password
 
 
 
@@ -126,6 +127,9 @@ object Generators {
     //Encrypted password
     val encryptedPasswordGen: Gen[EncryptedPassword] =
         nesGen(EncryptedPassword.apply)
+
+    val passwordGen: Gen[Password] =
+        nesGen(Password.apply)
 
     
 

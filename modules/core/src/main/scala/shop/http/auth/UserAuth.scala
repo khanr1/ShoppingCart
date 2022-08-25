@@ -3,9 +3,22 @@ package shop.http.auth
 import shop.domain.AuthDomain.*
 import io.circe.{Encoder,Decoder}
 import cats.Show
+import com.khanr1.auth.Jwt.JwtAuth.JwtSymmetric
 
 
 object UserAuth {
+
+  opaque type UserJwtAuth=JwtSymmetric
+  object UserJwtAuth{
+    def apply(jwt:JwtSymmetric):UserJwtAuth=jwt
+    extension (userjwt:UserJwtAuth) def value:JwtSymmetric=userjwt
+  }
+  opaque type AdminJwtAuth=JwtSymmetric
+  object AdminJwtAuth{
+    def apply(jwt:JwtSymmetric):AdminJwtAuth=jwt
+    extension (userjwt:AdminJwtAuth) def value:JwtSymmetric=userjwt
+  }
+
   case class User(id:UserID,name:UserName)
   object User{
       given encoder:Encoder[User]=Encoder.forProduct2("id","name")(u=>(u.id,u.name))
