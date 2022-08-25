@@ -9,6 +9,7 @@ import shop.domain.AuthDomain.UserID
 import scala.util.control.NoStackTrace
 import cats.Show
 import squants.market.USD
+import cats.kernel.Eq
 
 
 object CartDomain {
@@ -20,7 +21,8 @@ object CartDomain {
       
       given encoder:Encoder[Quantity]=Encoder.encodeInt.contramap(_.value)
       given decoder:Decoder[Quantity]=Decoder.decodeInt.map(apply)
-      given show:Show[Quantity]= Show.fromToString
+      given show:Show[Quantity]= Show.show(x=>x.toString())
+      given eq:Eq[Quantity]=Eq.fromUniversalEquals
   }
 
   opaque type Cart=Map[ItemID,Quantity]
@@ -30,6 +32,7 @@ object CartDomain {
 
       given encoder:Encoder[Cart]=cart => Json.obj( "items" -> Encoder.encodeMap.apply(cart.items))
       given decoder:Decoder[Cart]=Decoder.decodeMap.at("items")  
+      given show:Show[Cart]=Show.fromToString
     }
   
   case class CartItem(item:Item, quantity:Quantity){
@@ -40,6 +43,7 @@ object CartDomain {
     
     given encoder:Encoder[CartItem]=Encoder.forProduct2("item","quantity")(c=> (c.item,c.quantity))
     given decoder:Decoder[CartItem]=Decoder.forProduct2("item","quantity")(apply)
+    given show:Show[CartItem]=Show.fromToString
   }
 
   case class CartTotal(items:List[CartItem],total:Money)
@@ -47,6 +51,9 @@ object CartDomain {
 
     given encoder:Encoder[CartTotal]=Encoder.forProduct2("items","total")(c=>(c.items,c.total))
     given decoder:Decoder[CartTotal]=Decoder.forProduct2("items","total")(apply)
+    given show:Show[CartTotal]=Show.fromToString
+    given eq:Eq[CartTotal]=Eq.fromUniversalEquals
+
   }
 
   case class CartNotFound(userId:UserID) extends NoStackTrace

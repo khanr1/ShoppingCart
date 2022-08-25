@@ -9,6 +9,7 @@ import monocle.Iso
 import scala.util.control.NoStackTrace
 import cats.Show
 import javax.crypto.Cipher
+import cats.kernel.Eq
 
 
 
@@ -20,6 +21,8 @@ object AuthDomain {
 
       given decoder:Decoder[UserName]=Decoder.decodeString.map(apply)
       given encoder:Encoder[UserName]=Encoder.encodeString.contramap(_.value)
+      given show:Show[UserName]=Show.show(x=> x)
+      given eq:Eq[UserName]=Eq.fromUniversalEquals
     }
 
   opaque type Password =String
@@ -29,6 +32,7 @@ object AuthDomain {
 
       given decoder:Decoder[Password]=Decoder.decodeString.map(apply)
       given encoder:Encoder[Password]=Encoder.encodeString.contramap(_.value)
+      given show:Show[Password]=Show.show(x => x)
     }
 
   opaque type EncryptedPassword=String
@@ -38,6 +42,7 @@ object AuthDomain {
 
       given decoder:Decoder[EncryptedPassword]=Decoder.decodeString.map(apply)
       given encoder:Encoder[EncryptedPassword]=Encoder.encodeString.contramap(_.value)
+      given show:Show[EncryptedPassword]=Show.show(x=>x)
 
   }
   opaque type UserID =UUID
@@ -51,6 +56,7 @@ object AuthDomain {
           def _UUID:Iso[UUID,UserID]=Iso(apply)(u=> u.value)
       }
       given show:Show[UserID]=Show.show(uuid=>uuid.value.toString)
+      given eq  :Eq[UserID] = Eq.fromUniversalEquals
   }
 
   opaque type EncryptCipher= Cipher

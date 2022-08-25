@@ -12,23 +12,24 @@ import org.http4s.client._
 import org.http4s.client.dsl.Http4sClientDsl
 import shop.domain.PaymentDomain.*
 import shop.domain.OrderDomain.*
+import shop.config.Types.PaymentConfig
 
 trait PaymentClient[F[_]]{
     def process(payment:Payment):F[PaymentID]
 }
 
 object PaymentClient{
-    def make[F[_]:MonadCancelThrow:JsonDecoder](client:Client[F]):PaymentClient[F]={
+    def make[F[_]:MonadCancelThrow:JsonDecoder](cfg:PaymentConfig,client:Client[F]):PaymentClient[F]={
         new PaymentClient[F] with Http4sClientDsl[F]{
-            val baseUri = "http:localhost:8080/api/v1"
+            
 
             def process(payment: Payment): F[PaymentID] = 
-                Uri.fromString(baseUri+ "/payments")
+                Uri.fromString(cfg.uri.value+ "/payments")
                     .liftTo[F]
                     .flatMap{ uri =>
                         client.run(POST(payment,uri)).use{ resp =>
-                            resp.status match{
-                                case Status.Ok| Status.Conflict => resp.asJsonDecode[PaymentID]
+                            resp.status match{ 
+                                case Status.Ok | Status.Conflict => resp.asJsonDecode[PaymentID]
                                 case st => OrderOrPaymentError.PaymentError(Option(st.reason).getOrElse("unknown")).raiseError[F,PaymentID]
                             }}
                     }

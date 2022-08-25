@@ -3,6 +3,7 @@ package shop.domain
 import monocle.Iso
 import io.circe.Encoder
 import io.circe.Json
+import cats.kernel.Eq
 
 object HealthCheckDomain{
 
@@ -19,6 +20,7 @@ object HealthCheckDomain{
         }(if (_) Status.Okay else Status.Unreachable)
 
         given encoder:Encoder[Status]= s => Encoder.encodeString.apply(s.toString)
+        given eq:Eq[Status]=Eq.fromUniversalEquals
   }
 
   opaque type RedisStatus= Status

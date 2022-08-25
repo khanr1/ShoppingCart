@@ -18,6 +18,11 @@ import shop.http.auth.UserAuth.User
 import shop.domain.AuthDomain.UserID
 import shop.domain.AuthDomain.UserName
 import shop.http.auth.UserAuth.CommonUser
+import shop.domain.OrderDomain.PaymentID
+import shop.domain.OrderDomain.OrderID
+import shop.domain.PaymentDomain.Payment
+import shop.domain.AuthDomain.EncryptedPassword
+import shop.domain.AuthDomain.Password
 
 
 
@@ -108,6 +113,24 @@ object Generators {
         n<- userNameGen
     } yield User(i,n)
     val commonUserGen:Gen[CommonUser]=userGen.map(CommonUser.apply)
+    //payment 
+    val paymentIdGen: Gen[PaymentID] =
+        idGen(PaymentID.apply)
+      val paymentGen: Gen[Payment] =
+    for {
+      i <- userIdGen
+      m <- moneyGen
+      c <- cardGen
+    } yield Payment(i, m, c)
+    //order
+    val orderIdGen:Gen[OrderID]=idGen(OrderID.apply)
+    //Encrypted password
+    val encryptedPasswordGen: Gen[EncryptedPassword] =
+        nesGen(EncryptedPassword.apply)
+
+    val passwordGen: Gen[Password] =
+        nesGen(Password.apply)
+
     
 
 

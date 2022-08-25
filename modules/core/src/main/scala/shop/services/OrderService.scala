@@ -63,10 +63,10 @@ object OrderSQL{
 
 
   val selectByUserIDAndOrderID:Query[UserID ~ OrderID,Order]=
-    sql""" SELECT * FROM order WHERE user_id=$userID AND order_id=$orderID""".query(decoder)
+    sql""" SELECT * FROM orders WHERE user_id=$userID AND uuid=$orderID""".query(decoder)
   
   val selectByUserID:Query[UserID,Order] = 
-    sql""" SELECT * FROM order WHERE user_id=$userID""".query(decoder)
+    sql""" SELECT * FROM orders WHERE user_id=$userID""".query(decoder)
   
   val inserOrder:Command[UserID~Order]= 
     sql""" INSERT INTO orders VALUES ($encoder)""".command 

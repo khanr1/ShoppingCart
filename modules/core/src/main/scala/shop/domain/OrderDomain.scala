@@ -10,6 +10,7 @@ import squants.market.Money
 import shop.domain.CartDomain.Quantity
 import scala.util.control.NoStackTrace
 import cats.Show
+import cats.kernel.Eq
 
 object OrderDomain {
 
@@ -23,6 +24,9 @@ object OrderDomain {
       }
       given decoder:Decoder[OrderID]=Decoder.decodeUUID.map(apply)
       given encoder:Encoder[OrderID]=Encoder.encodeUUID.contramap(_.value)
+      given eq :Eq[OrderID]=Eq.fromUniversalEquals
+      given show:Show[OrderID]=Show.show(x=> x.toString())
+
       
   }
 
@@ -36,7 +40,8 @@ object OrderDomain {
       }
       given decoder:Decoder[PaymentID]=Decoder.decodeUUID.map(apply)
       given encoder:Encoder[PaymentID]=Encoder.encodeUUID.contramap(_.value)
-      given show:Show[PaymentID]=Show.fromToString
+      given show:Show[PaymentID]=Show.show(x=>x.toString())
+      given eq :Eq[PaymentID]=Eq.fromUniversalEquals
 
   }
   
@@ -63,4 +68,9 @@ object OrderDomain {
       case OrderError(cause:String) extends OrderOrPaymentError
       case PaymentError(cause:String) extends OrderOrPaymentError
   }
+  object OrderOrPaymentError{
+    given show:Show[OrderOrPaymentError]=Show.show(_.cause)
+    given eq:Eq[OrderOrPaymentError]=Eq.fromUniversalEquals
+  }
+
 }

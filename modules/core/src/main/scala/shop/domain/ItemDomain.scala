@@ -13,6 +13,8 @@ import shop.optics.IsUUID
 import cats.Show
 import shop.domain.CartDomain.CartItem
 import shop.domain.CartDomain.Quantity
+import cats.syntax.show
+import cats.kernel.Eq
 
 
 object ItemDomain {
@@ -39,7 +41,8 @@ object ItemDomain {
 
       given encoder:Encoder[ItemName]=name => Encoder.encodeString.apply(name.value)
       given decoder:Decoder[ItemName]=Decoder.decodeString.map(apply)
-
+      given show:Show[ItemName]=Show.fromToString
+      given eq:Eq[ItemName]=Eq.fromUniversalEquals
   }
 
   opaque type ItemDescription=String
@@ -49,6 +52,7 @@ object ItemDomain {
 
       given encoder:Encoder[ItemDescription]=name => Encoder.encodeString.apply(name.value)
       given decoder:Decoder[ItemDescription]=Decoder.decodeString.map(apply)
+      given show : Show[ItemDescription]=Show.fromToString
 
   }
   
@@ -80,6 +84,8 @@ object ItemDomain {
       "brand",
       "category"
     )(apply)
+
+    given show:Show[Item]=Show.fromToString
   }
   
   final case class UpdateItem(
