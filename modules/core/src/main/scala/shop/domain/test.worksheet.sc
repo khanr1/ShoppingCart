@@ -1,8 +1,12 @@
+import shop.config.AppEnvironment
+
 
 import cats.data.*
+import cats.*
 import cats.effect.*
-import cats.implicits.*
+
 import cats.syntax.all.*
+import cats.implicits.*
 import cats.effect.unsafe.implicits.global
 import com.khanr1.auth.Jwt.*
 import dev.profunktor.redis4cats.{ Redis, RedisCommands }
@@ -25,6 +29,7 @@ import shop.domain.CategoryDomain.*
 import shop.domain.CheckOutDomain.CardName
 import shop.domain.HealthCheckDomain.*
 import shop.domain.HealthCheckDomain.Status
+import shop.domain.HealthCheckDomain.Status.given
 import shop.domain.ID
 import shop.domain.ItemDomain.*
 import shop.domain.ItemDomain.*
@@ -39,6 +44,9 @@ import shop.services.ShoppingCartsService
 import shop.services.UsersAuth
 import shop.services.UsersService
 import squants.market.USD
+
+import shop.config.AppEnvironment.given
+import shop.config.AppEnvironment
 
 import java.util.UUID
 val brand= shop.domain.BrandDomain.Brand.apply(BrandID(UUID.randomUUID()),shop.domain.BrandDomain.BrandName.apply("test"))
@@ -98,3 +106,13 @@ decode.unsafeRunSync()
 UserID(UUID.randomUUID()).asJson.noSpaces
 
 item.asJson.noSpaces
+
+
+Status.show
+Status.Okay.show
+AppEnvironment.Test.show
+
+// "test" match 
+//     case "tsté"=> false
+//     case "test"=> true
+//     case _ => false

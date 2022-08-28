@@ -4,6 +4,7 @@ import monocle.Iso
 import io.circe.Encoder
 import io.circe.Json
 import cats.kernel.Eq
+import cats.Show
 
 object HealthCheckDomain{
 
@@ -21,6 +22,8 @@ object HealthCheckDomain{
 
         given encoder:Encoder[Status]= s => Encoder.encodeString.apply(s.toString)
         given eq:Eq[Status]=Eq.fromUniversalEquals
+        given show:Show[Status]=Show.fromToString
+        
   }
 
   opaque type RedisStatus= Status
