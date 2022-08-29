@@ -12,7 +12,7 @@ object Types {
   opaque type JwtSecretKeyConfig = String
   object JwtSecretKeyConfig{
     def apply(str:String):JwtSecretKeyConfig=str
-    extension (jskc:JwtSecretKeyConfig) def value:String= jskc
+    extension (jskc:JwtSecretKeyConfig) def secret:String= jskc
     given show:Show[JwtSecretKeyConfig]=Show.fromToString
     given configDecoder:ConfigDecoder[String,JwtSecretKeyConfig]=
       ConfigDecoder[String,JwtSecretKeyConfig].map(apply)
@@ -53,9 +53,9 @@ object Types {
   object JwtAccessTokenKeyConfig{
     def apply(str:String):JwtAccessTokenKeyConfig=str
     extension (ps:JwtAccessTokenKeyConfig){
-      def value:String=ps
+      def secret:String=ps
     }
-    given show:Show[JwtAccessTokenKeyConfig]=Show.show(ps=> ps.value)
+    given show:Show[JwtAccessTokenKeyConfig]=Show.show(ps=> ps.secret)
     given configDecoder:ConfigDecoder[String,JwtAccessTokenKeyConfig]=
       ConfigDecoder[String,JwtAccessTokenKeyConfig].map(apply)
       
@@ -65,9 +65,9 @@ object Types {
   object AdminUserTokenConfig{
     def apply(str:String):AdminUserTokenConfig=str
     extension (ps:AdminUserTokenConfig){
-      def value:String=ps
+      def secret:String=ps
     }
-    given show:Show[AdminUserTokenConfig]=Show.show(ps=> ps.value)
+    given show:Show[AdminUserTokenConfig]=Show.show(ps=> ps.secret)
     given configDecoder:ConfigDecoder[String,AdminUserTokenConfig]=
       ConfigDecoder[String,AdminUserTokenConfig].map(apply)
       
@@ -92,7 +92,7 @@ object Types {
   case class CheckOutConfig(retriesLimit:Int,retriesBackoff:FiniteDuration)
 
   case class AppConfig(
-    adminJwtConfir:AdminJwtConfig,
+    adminJwtConfig:AdminJwtConfig,
     tokenConfig:Secret[JwtAccessTokenKeyConfig],
     passwordSalt:Secret[PasswordSalt],
     tokenExpiration:TokenExpiration,

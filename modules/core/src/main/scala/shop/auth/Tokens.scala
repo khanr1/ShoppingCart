@@ -23,7 +23,7 @@ object Tokens {
         for {
           uuid  <- GenUUID[F].make
           claim <- jwtExpire.expiresIn(JwtClaim(s"{\"id\":\"${uuid}\"}"), exp)
-          secretKey = JwtSecret(config.value)
+          secretKey = JwtSecret(config.secret)
           token <- jwtEncode[F](claim, secretKey, JwtAlgorithm.HS256)
         } yield token
     }
