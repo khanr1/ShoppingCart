@@ -115,6 +115,15 @@ object AuthDomain {
   case class InvalidPassword(username:UserName) extends NoStackTrace
   case object UnSupportedOperation  extends NoStackTrace
   
+  // Adming Auth
+  opaque type ClaimContent = UUID
+  object ClaimContent{
+    def apply(uuid:UUID):ClaimContent=uuid
+    extension (claim:ClaimContent) def uuid:UUID=claim
+
+    given decoder:Decoder[ClaimContent]=Decoder.decodeUUID.at("uuid").map(ClaimContent.apply)
+
+  }
 
 
 }

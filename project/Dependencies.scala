@@ -16,6 +16,7 @@ object Dependencies{
         val javaxCrypto= "1.0.1"
         val weaver     = "0.7.11"
         val ciris      = "2.3.3"
+        val logback    = "1.3.0"
     }
     
     object Library{ 
@@ -41,6 +42,8 @@ object Dependencies{
         val skunkCore     = "org.tpolecat"       %% "skunk-core"          % Version.skunk
         val squants       = "org.typelevel"      %% "squants"             % Version.squants
         val ciris         = "is.cir"             %% "ciris"               % Version.ciris
+        val logback       = "ch.qos.logback"     % "logback-classic"      % Version.logback
+
         // TEST
         val catsLaws          = "org.typelevel"       %% "cats-laws"           % Version.cats
         val monocleLaws       = "dev.optics"          %% "monocle-law"        % Version.monocle

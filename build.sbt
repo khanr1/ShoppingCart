@@ -34,6 +34,7 @@ lazy val core = (project in file("./modules/core"))
             Library.jwtAuth,
             Library.javaxCrypto,
             Library.ciris,
+            Library.logback % Runtime,
         )
     )
 
