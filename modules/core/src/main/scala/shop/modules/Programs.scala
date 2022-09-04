@@ -14,7 +14,9 @@ sealed abstract class Programs[F[_]:Background:Logger:Temporal] private(
     services:Services[F],
     clients:HttpClients[F]
 ){
-    val retryPolicy:RetryPolicy[F] = limitRetries[F](cfg.retriesLimit) |+| exponentialBackoff(cfg.retriesBackoff)
+    val retryPolicy:RetryPolicy[F] = 
+        limitRetries[F](cfg.retriesLimit) |+| exponentialBackoff(cfg.retriesBackoff)
+
     val checkout:Checkout[F]=Checkout[F](
         clients.payment,
         services.cart,
@@ -24,14 +26,11 @@ sealed abstract class Programs[F[_]:Background:Logger:Temporal] private(
         
 }
 
-object Programs{
-    def make[F[_]:Background:Logger:Temporal](
-        checkOutConfig:CheckOutConfig,
-        services:Services[F],
-        clients:HttpClients[F]
-        ):Programs[F] =new Programs (
-            checkOutConfig,
-            services,
-            clients
-        ) {}
+object Programs {
+  def make[F[_]: Background: Logger: Temporal](
+      checkoutConfig: CheckOutConfig,
+      services: Services[F],
+      clients: HttpClients[F]
+  ): Programs[F] =
+    new Programs[F](checkoutConfig, services, clients) {}
 }

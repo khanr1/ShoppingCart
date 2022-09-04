@@ -11,13 +11,15 @@ enum AppEnvironment{
 }
 
 object AppEnvironment{
- 
-  given configDecoder:ConfigDecoder[String,AppEnvironment]=ConfigDecoder[String].mapOption("AppEnvironment"){
-    x => x match
+
+  def apply(str:String):Option[AppEnvironment]= str match
       case "Test" => Some(Test)
       case "Prod" => Some(Prod)
       case _ => None   
-  }
+  
+
+ 
+  given configDecoder:ConfigDecoder[String,AppEnvironment]=ConfigDecoder[String].mapOption("AppEnvironment"){AppEnvironment(_)}
 
   given show:Show[AppEnvironment]=Show.fromToString
 }

@@ -11,11 +11,14 @@ object Types {
 
   opaque type JwtSecretKeyConfig = String
   object JwtSecretKeyConfig{
-    def apply(str:String):JwtSecretKeyConfig=str
+    def apply(secret:String):JwtSecretKeyConfig=secret
     extension (jskc:JwtSecretKeyConfig) def secret:String= jskc
     given show:Show[JwtSecretKeyConfig]=Show.fromToString
     given configDecoder:ConfigDecoder[String,JwtSecretKeyConfig]=
-      ConfigDecoder[String,JwtSecretKeyConfig].map(apply)
+      ConfigDecoder[String,JwtSecretKeyConfig].mapOption("JwtSecretKeyConfig")( x=> x match
+        case x if x.secret.nonEmpty => Some(x)
+        case _ => None
+      )
   }
 
   opaque type JwtClaimConfig = String
@@ -24,7 +27,10 @@ object Types {
     extension (jskc:JwtClaimConfig) def value:String= jskc
     given show:Show[JwtClaimConfig]=Show.fromToString
     given configDecoder:ConfigDecoder[String,JwtClaimConfig]=
-      ConfigDecoder[String,JwtClaimConfig].map(apply)
+      ConfigDecoder[String,JwtClaimConfig].mapOption("JwtClaimConfig")( x=> x match
+        case x if x.nonEmpty => Some(x)
+        case _ => None
+      )
   }
 
   opaque type ShoppingCartExpiration = FiniteDuration
@@ -134,7 +140,7 @@ object Types {
 
   case class PostgresSQLConfig(
     host:String,
-    port:String,
+    port:Int,
     user:String,
     password:Secret[String],
     database:String,

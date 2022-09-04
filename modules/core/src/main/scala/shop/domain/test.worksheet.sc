@@ -1,5 +1,6 @@
 import shop.config.AppEnvironment
 
+import shop.config.AppEnvironment.*
 
 import cats.data.*
 import cats.*
@@ -44,9 +45,12 @@ import shop.services.ShoppingCartsService
 import shop.services.UsersAuth
 import shop.services.UsersService
 import squants.market.USD
+import ciris.*
 
 import shop.config.AppEnvironment.given
 import shop.config.AppEnvironment
+import shop.config.Config.*
+import shop.config.Types.*
 
 import java.util.UUID
 val brand= shop.domain.BrandDomain.Brand.apply(BrandID(UUID.randomUUID()),shop.domain.BrandDomain.BrandName.apply("test"))
@@ -116,3 +120,6 @@ AppEnvironment.Test.show
 //     case "tsté"=> false
 //     case "test"=> true
 //     case _ => false
+11+6
+env("SC_APP_ENV").as[AppEnvironment].attempt[IO].unsafeRunSync()
+env("SC_JWT_SECRET_KEY").as[String].map(JwtSecretKeyConfig(_)).secret.attempt[IO].unsafeRunSync()

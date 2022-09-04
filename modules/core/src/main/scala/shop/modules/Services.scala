@@ -21,8 +21,8 @@ object Services{
     def make[F[_]:GenUUID:Temporal](
         redis:RedisCommands[F,String,String],
         postgres:Resource[F,Session[F]],
-        cartExpiration : ShoppingCartExpiration
-    ) :Services[F] = {
+        cartExpiration: ShoppingCartExpiration
+    ): Services[F] = {
         val _items= ItemsService.make[F](postgres)
         new Services[F](
             cart=ShoppingCartsService.make[F](_items,redis,cartExpiration),
