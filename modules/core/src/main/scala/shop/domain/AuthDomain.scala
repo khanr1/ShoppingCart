@@ -121,7 +121,7 @@ object AuthDomain {
     def apply(uuid:UUID):ClaimContent=uuid
     extension (claim:ClaimContent) def uuid:UUID=claim
 
-    given decoder:Decoder[ClaimContent]=Decoder.forProduct1("uuid")(apply(_))
+    given decoder:Decoder[ClaimContent]=Decoder.decodeUUID.at("uuid").map(ClaimContent.apply)
 
   }
 

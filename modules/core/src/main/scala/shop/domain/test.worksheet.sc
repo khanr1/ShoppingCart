@@ -123,3 +123,7 @@ AppEnvironment.Test.show
 11+6
 env("SC_APP_ENV").as[AppEnvironment].attempt[IO].unsafeRunSync()
 env("SC_JWT_SECRET_KEY").as[String].map(JwtSecretKeyConfig(_)).secret.attempt[IO].unsafeRunSync()
+
+val content = "{\"uuid\": \"004b4457-71c3-4439-a1b2-03820263b59c\"}"
+import io.circe.parser.{ decode => jsonDecode }
+ApplicativeThrow[IO].fromEither(jsonDecode[ClaimContent](content))

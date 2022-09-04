@@ -18,6 +18,7 @@ import io.circe.parser.{ decode => jsonDecode }
 import shop.auth.JwtExpire
 import shop.services.UsersService
 import shop.http.auth.UserAuth
+import org.typelevel.log4cats.Logger
 
 sealed abstract class Security[F[_]] private(
     val auth:AuthsService[F],
@@ -28,7 +29,7 @@ sealed abstract class Security[F[_]] private(
 ) 
 
 object Security {
-  def make[F[_]: Sync](
+  def make[F[_]: Sync :Logger](
       cfg: AppConfig,
       postgres: Resource[F, Session[F]],
       redis: RedisCommands[F, String, String]
@@ -56,9 +57,13 @@ object Security {
 
     for {
       adminClaim <- jwtDecode[F](adminToken, adminJwtAuth.value)
+      _ <- Logger[F].info(s"[DEBUG] admin claim ${adminClaim}")
       content    <- ApplicativeThrow[F].fromEither(jsonDecode[ClaimContent](adminClaim.content))
+      _ <- Logger[F].info(s"[DEBUG] admin claim ${adminClaim.content}")
       adminUser = AdminUser(User(UserID(content.uuid), UserName("admin")))
+      _ <- Logger[F].info(s"[DEBUG] admin User  ${adminUser}")
       tokens <- JwtExpire.make[F].map(Tokens.make[F](_, cfg.tokenConfig.value, cfg.tokenExpiration))
+      _ <- Logger[F].info(s" ${tokens}")
       crypto <- Crypto.make[F](cfg.passwordSalt.value)
       users     = UsersService.make[F](postgres)
       auth      = AuthsService.make[F](cfg.tokenExpiration, tokens, users, redis, crypto)
