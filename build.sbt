@@ -12,8 +12,15 @@ lazy val root = (project in file("."))
     .aggregate(core,tests)
 
 lazy val core = (project in file("./modules/core"))
+    .enablePlugins(DockerPlugin)
+    .enablePlugins(JavaAppPackaging)
+    .enablePlugins(AshScriptPlugin)
     .settings(
         name:= "shopping-cart-core",
+        Docker / packageName := "shopping-cart",
+        dockerExposedPorts ++=Seq(8080),
+        dockerUpdateLatest:= true,
+        dockerBaseImage := "openjdk:11-jre-slim-buster",
         libraryDependencies ++=Seq(
             Library.cats,
             Library.catsEffect,

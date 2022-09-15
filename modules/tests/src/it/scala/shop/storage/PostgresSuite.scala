@@ -30,8 +30,8 @@ object PostgresSuite extends ResourceSuite{
     Session.pooled[IO](
       host = "localhost",
       port = 5432,
-      user = "bot",
-      password =Some("banana"),
+      user = "postgres",
+      password =Some("postgres"),
       database = "store",
       max = 10
     ).beforeAll{ 

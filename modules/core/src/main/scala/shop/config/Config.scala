@@ -61,7 +61,7 @@ object Config {
         PostgresSQLConfig(
           host = "localhost",
           port = 5432,
-          user = "bot",
+          user = "postgres",
           password = postgresPassword,
           database = "store",
           max = 10
